@@ -3,6 +3,7 @@
 var React = require('react-native');
 var buffer = require('buffer');
 //var Text = React.Text;
+var authService = require('./AuthService');
 var {
   AppRegistry,
   StyleSheet,
@@ -12,9 +13,14 @@ var {
   TextInput,
   TouchableHighlight,
   Component,
-  ActivityIndicatorIOS
+  ProgressBarAndroid,
+  ToastAndroid,
+  ScrollView
+    
   
 } = React;
+
+var AsyncStorage = require('react-native').AsyncStorage;
 
 class Login extends Component{
 
@@ -26,9 +32,32 @@ class Login extends Component{
     }
   }
 
+  componentDidMount(){
+
+    var uName = AsyncStorage.getItem('username').then((value)=> 
+      this.setState({
+        username : value
+      })
+      );
+    var pWord = AsyncStorage.getItem('password').then((value)=>
+
+        this.setState({
+          password : value
+
+        })
+      );
+    console.log(this.state.username +' : '+this.state.password);
+
+  }
 
 	render() {
       var errorCtrl = <View />;
+      if(this.state.showProgress)
+      {
+          <ProgressBarAndroid 
+              styleAttr='Large'
+              animating= {this.state.showProgress} /> 
+      }
       if(!this.state.success && this.state.badCredentials)
       {
         errorCtrl = <Text style={styles.error}>
@@ -47,9 +76,15 @@ class Login extends Component{
                       Username and password need to be filled in correctly
                       </Text>
       }
+
 		return (
 
-				<View style={styles.container}>
+	<ScrollView
+        style = {{ backgroundColor: '#F5FCFF'}}
+        automaticallyAdjustContentInsets={false}
+        onScroll={() => { console.log('onScroll!'); }}
+        scrollEventThrottle={200}>
+<View style = {styles.container}>
           <Image source={require('./images/octocat.png')} 
             style={styles.logo}/>
           <Text style={styles.heading}> GitHub Browser
@@ -58,21 +93,21 @@ class Login extends Component{
             placeholder= 'GitHub username'
             autoCapitalize= 'none'
             autoCorrect={false}
+            defaultValue = {this.state.username}
+            autoFocus={true}
             onChangeText={(text) => this.setState({username: text})}/>
            <TextInput style={styles.input}
             placeholder='GitHub password'
             password={true}
+            autoFocus={true}
+            defaultValue={this.state.password}
             onChangeText={(text) => this.setState({password: text})}/>
             <TouchableHighlight style={styles.button} onPress={this.onLoginPressed.bind(this)}>
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableHighlight>   
-            {errorCtrl}
-                    <ActivityIndicatorIOS
-          animating={this.state.showProgress}
-          color={'#808080'}
-          size={'large'} 
-          style={styles.loader}/>        
-        </View>
+            {errorCtrl} 
+            </View>
+      </ScrollView>
 
         
 			)
@@ -86,7 +121,7 @@ class Login extends Component{
     if(this.state.username || this.state.password )
     {
     this.setState({inPutCorrect : true})
-    var authService = require('./AuthService');
+
     authService.login({
       username : this.state.username,
       password : this.state.password
@@ -96,7 +131,9 @@ class Login extends Component{
         showProgress : false
       },results));
       if(results.success && this.props.onLogin){
-        console.log('dit lukt');
+        AsyncStorage.setItem('username',this.state.username);
+        AsyncStorage.setItem('password',this.state.password);
+        ToastAndroid.show('Hello, '+this.state.username+', welcome!!',ToastAndroid.LONG);
         this.props.onLogin();
       }
     })
@@ -142,7 +179,7 @@ var styles = StyleSheet.create({
   input: {
     height: 50,
     marginTop : 25,
-    padding: 4,
+    padding: 8,
     fontSize: 18,
     borderWidth: 1,
     borderColor: "#48bbec"

@@ -10,9 +10,9 @@ var {
   StyleSheet,
   Component,
   ListView,
-  ActivityIndicatorIOS,
   TouchableHighlight,
 } = React;
+var Progress = require('./Progress');
 
 class SearchResult extends Component{
 
@@ -26,7 +26,8 @@ class SearchResult extends Component{
     this.state = {
       dataSource : ds.cloneWithRows([]),
       search : props.searchQuery,
-      showProgress : true
+      showProgress : true,
+      count: 0
     };
   }
   componentDidMount(){
@@ -42,11 +43,12 @@ class SearchResult extends Component{
         .then((responseData)=>{
             console.log(responseData);
           this.setState({
+            count: responseData.items.length,
             repositories : responseData.repositories,
             dataSource : this.state.dataSource.cloneWithRows(responseData.items)
           });
         }).finally(()=>{
-
+            console.log('finally should become false now');
             this.setState({
               showProgress : false
             });
@@ -91,26 +93,41 @@ class SearchResult extends Component{
 
 
 	render() {
+    console.log("State to render now : "+this.state.showProgress);
      if(this.state.showProgress){
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicatorIOS
-              animating={true}
-              color={'#808080'}
-              size={'large'} />
+              <Progress />
             </View>
           )
       }
       else
       {
+        console.log('DataSource =>' + this.state.count);
+        if(this.state.count > 0)
+        {
+        console.log('render screen good');
           return (
             
-            <View style = {{flex:1, paddingTop: 80}}>
+            <View style = {{flex:1, paddingTop: 80,backgroundColor:'#F8F8F8'}}>
               <ListView
                 dataSource={this.state.dataSource}
                 renderRow={this.renderRow.bind(this)} />
               </View>
             )
+
+        }
+        else
+        {
+         console.log('render screen not so good');
+          return (
+            
+            <View style = {styles.container}>
+              <Text style={styles.rowTitle}>No results for {this.state.search} </Text>
+              </View>
+            )
+        }
+
       }
 
         }
@@ -122,7 +139,7 @@ class SearchResult extends Component{
       		paddingTop : 80,
           justifyContent: 'flex-start',
           alignItems: 'center',
-          backgroundColor: '#F5FCFC'
+          backgroundColor: '#F8F8F8'
       	},
         separator: {
           borderColor:'#D7D7D7',

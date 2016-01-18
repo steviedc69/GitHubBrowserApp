@@ -12,6 +12,7 @@ var {
   ListView,
   ActivityIndicatorIOS,
   TouchableHighlight,
+  ScrollView,
 } = React;
 
 class PushPayLoad extends Component{
@@ -54,6 +55,11 @@ class PushPayLoad extends Component{
 
 	render() {
       return (
+          <ScrollView
+        style = {{ backgroundColor: '#F5FCFF'}}
+        automaticallyAdjustContentInsets={false}
+        onScroll={() => { console.log('onScroll!'); }}
+        scrollEventThrottle={200}>
       <View style={{flex:1}}>
         <View style={{
           paddingTop : 80,
@@ -84,7 +90,8 @@ class PushPayLoad extends Component{
               dataSource={this.state.dataSource}
               renderRow={this.renderRow.bind(this)}
               renderHeader={this.renderHeader.bind(this)}/>  
-    </View> 
+    </View>       
+    </ScrollView>
         )
 
         }
@@ -94,9 +101,17 @@ class PushPayLoad extends Component{
       	container : {
       		flex : 1,
       		paddingTop : 80,
-          justifyContent: 'flex-start',
-          alignItems: 'center'
+          	justifyContent: 'flex-start',
+          	alignItems: 'center'
       	},
+      row : {
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          borderColor: '#D7D7D7',
+          borderBottomWidth: 1,
+          padding: 10
+        },
         separator: {
           borderColor:'#D7D7D7',
           borderWidth:1,
@@ -112,14 +127,7 @@ class PushPayLoad extends Component{
           paddingBottom : 20,
           fontSize: 20
         },
-        row : {
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'center',
-          borderColor: '#D7D7D7',
-          borderBottomWidth: 1,
-          padding: 10
-        }
+ 
 
       });
 module.exports = PushPayLoad; 

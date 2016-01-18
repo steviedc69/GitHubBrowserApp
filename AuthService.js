@@ -40,7 +40,7 @@ class AuthService {
 
 	login(creds, cb)
 	{
-		    var b = new buffer.Buffer(creds.username.toLowerCase().trim()+ ':'+creds.password);
+		var b = new buffer.Buffer(creds.username.toLowerCase().trim()+ ':'+creds.password);
     var encodedAuth = b.toString('base64');
 
     fetch('https://api.github.com/user',

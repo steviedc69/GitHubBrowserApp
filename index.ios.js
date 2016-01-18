@@ -14,6 +14,7 @@ var {
   Text,
   View,
   ActivityIndicatorIOS,
+  AsyncStorage,
 
 } = React;
 
@@ -23,6 +24,7 @@ var GitHubBrowser = React.createClass({
 
 
 componentDidMount: function(){
+  console.log('componentDidMount start');
 		AuthService.getAuthInfo((err,authInfo)=> {
 			this.setState({
 

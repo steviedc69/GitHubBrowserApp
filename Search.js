@@ -11,7 +11,8 @@ var {
   View,
   TextInput,
   TouchableHighlight,
-  Component
+  Component,
+  ScrollView,
   
 } = React;
 
@@ -19,8 +20,10 @@ class Search extends Component{
 
   constructor(props){
     super(props);
+    console.log('init Search');
     this.state = {
-      searchQuery : ''
+      searchQuery : '',
+      error : ''
       
     }
   }
@@ -30,7 +33,11 @@ class Search extends Component{
  
 		return (
 
-
+  <ScrollView
+        style = {{ backgroundColor: '#F5FCFF'}}
+        automaticallyAdjustContentInsets={false}
+        onScroll={() => { console.log('onScroll!'); }}
+        scrollEventThrottle={200}>
         <View style={styles.container}>
         <Image
           style={styles.logo}
@@ -42,23 +49,38 @@ class Search extends Component{
             onChangeText={(text) => this.setState({searchQuery: text})}/>
             <TouchableHighlight style={styles.button} onPress={this.onPressed.bind(this)}>
               <Text style={styles.buttonText}>Search</Text>
-            </TouchableHighlight>          
+            </TouchableHighlight>  
+
+            <Text style={styles.error}>{this.state.error}</Text>        
         
         </View>
-
-        
+        </ScrollView>
 			)
 	}
   onPressed(){
     console.log('Searching for '+this.state.searchQuery);
+    if(this.state.searchQuery === '')
+    {
+      this.setState({
+        error : 'Search query can not be empty'
+      })
+
+    }
+    else
+    {
     this.props.navigator.push({
       title : 'Search results',
+      name : 'Search results',
       component : SearchResult,
+      navigator: this.props.navigator,
+      searchQuery : this.state.searchQuery,
+      id : 'searchResult',
       passProps : {
         searchQuery : this.state.searchQuery
       }
 
     });
+  }
   }
 
 

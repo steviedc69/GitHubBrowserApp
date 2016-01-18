@@ -3,6 +3,7 @@
 var React = require('react-native');
 var Moment = require('moment');
 var PushPayLoad = require('./PushPayLoad');
+var Progress = require('./Progress');
 var {
   Text,
   View,
@@ -10,9 +11,7 @@ var {
   StyleSheet,
   Component,
   ListView,
-  ActivityIndicatorIOS,
   TouchableHighlight,
-  NavigatorIOS
 } = React;
 
 class Feed extends Component{
@@ -54,14 +53,22 @@ class Feed extends Component{
   }
   pressRow(rowData)
   {
-
-  	console.log(this.props.navigator ? 'Yes' : 'NO');
+  	console.log(rowData ? 'There is motherfucking data' : 'there is no motherfucking data')
+  	console.log(this.props.navigator ? 'Yes' : 'NO' );
   	this.props.navigator.push({
-
+  		id : 'pushEvent',
+  		data: rowData,
+  		navigator : this.props.navigator,
   		title: 'Push event',
+  		name: 'Push event',
   		component: PushPayLoad,
   		passProps: {
-  			data : rowData
+  		
+  		data : rowData,
+        navigator: this.props.navigator,
+        id: 'pushEvent',
+        name: 'Push event',
+
   		}
   		
   	});
@@ -77,17 +84,17 @@ class Feed extends Component{
       		<View style = {styles.row}>
       			<Image source = {{uri: rowData.actor.avatar_url}} style={styles.avatar} />
       			<View style={styles.textContainer}>
-      				<Text style= {{backgroundColor : '#fff'}}>
+      				<Text>
       					{Moment(rowData.created_at).fromNow()}
       				</Text>
-      				<Text style= {{backgroundColor : '#fff'}}>
+      				<Text>
       					{rowData.actor.login} pushed to
       				</Text>
-      				<Text style= {{backgroundColor : '#fff'}}>
+      				<Text>
       					{rowData.payload.ref.replace('refs/heads','')}
       				</Text>
-      				<Text style= {{backgroundColor : '#fff'}}>
-      					at       					
+      				<Text>
+      					at          					
       					<Text style= {{fontWeight: '600'}}>
       					{rowData.repo.name}
       					</Text>
@@ -105,12 +112,8 @@ class Feed extends Component{
 	render() {
       if(this.state.showProgress){
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicatorIOS
-              animating={true}
-              color={'#808080'}
-              size={'large'} />
-            </View>
+
+            <Progress />
           )
       }
       else
