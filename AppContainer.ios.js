@@ -16,6 +16,10 @@ var Feed = require('./Feed');
 var NavigationFeed = require('./NavigationFeed');
 var PushPayLoad = require('./PushPayLoad');
 var Search = require('./Search');
+var ChuckNorris = require('./ChuckNorris');
+var ImageGesture = require('./ImageGesture');
+
+
 class AppContainer extends Component{
 
   constructor(props){
@@ -26,6 +30,12 @@ class AppContainer extends Component{
     }
   }
 
+  chuckIcon(){
+     return (<Image
+    style={{width:30,height:30}}
+    source={require('./images/chuck.gif')} />);
+  }
+  
 
 	render() {
           return (
@@ -49,10 +59,26 @@ class AppContainer extends Component{
                 icon={require('./images/search.png')}
                 onPress={()=> this.setState({selectedTab: 'search'})}>
                 <NavigatorIOS
-                    style={{flex:1}}
+                  style={{flex:1}}
                     initialRoute={{
                       title: 'Search',
                       component: Search
+                    }} />
+            </TabBarIOS.Item>
+               <TabBarIOS.Item 
+                style={{flex:1}}
+                title='Chuck Norris'
+                selected={this.state.selectedTab == 'chuck'}
+                icon={require('./images/chuck2.gif')}
+                onPress={()=> this.setState({selectedTab: 'chuck'})}>
+                <NavigatorIOS
+                    ref='nav'
+                    style={{flex:1}}
+                    initialRoute={{
+                      title: 'Chuck Norris',
+                      component: ChuckNorris,
+                      rightButtonTitle: 'Play',
+                      onRightButtonPress: this.rightPushed.bind(this)
                     }} />
             </TabBarIOS.Item>
           </TabBarIOS>
@@ -60,7 +86,17 @@ class AppContainer extends Component{
         )
 
   }
+  rightPushed(){
+    console.log('right pushed '+(this.refs.nav.navigator ? 'null':'yes'));
+    this.refs.nav.navigator.push({
+
+      title : 'Move like Chuck',
+      name : 'Move like chuck',
+      component : ImageGesture,
+    })
+  }
 }
+
 
 var styles = StyleSheet.create({
 
